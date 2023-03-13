@@ -13,7 +13,7 @@ const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 
 const PORT = 8080;
-const HOST = 'localhost';
+const HOST = 'https://easy-blue-cod-toga.cyclic.app';
 //App
 const app = express()
 app.use(cors());
@@ -59,9 +59,9 @@ app.post('/setindexes', async (req, res) => {
 })
 //app.listen(PORT, HOST);
 app.listen(PORT, function () {
-    console.log("server listening on port "+PORT+ "...");
+    console.log("server listening");
 });
-console.log(`Running on http://${HOST}:${PORT}`);
+console.log(`Running on ${HOST}`);
 
 //exports.app = app;
 exports.app = app;
