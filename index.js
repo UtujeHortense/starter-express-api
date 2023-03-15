@@ -7,18 +7,53 @@
 'use strict';
 const express = require('express');
 const cors = require('cors');
-//const fetch = require('node-fetch');
 const bodyParser = require('body-parser');
-//const open = require('open')
-const MongoClient = require('mongodb').MongoClient;
+
 
 const PORT = 8080;
 const HOST = 'https://easy-blue-cod-toga.cyclic.app';
+
 //App
 const app = express()
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
+
+//MongoDB
+const { MongoClient, ServerApiVersion } = require("mongodb");
+
+// Replace the placeholders with your credentials and hostname
+const uri = "mongodb+srv://mypiso:i1tmMjT1HFDutT7o@pisoplannercluster0.bap6afz.mongodb.net/?retryWrites=true&w=majority";
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri,  {
+        serverApi: {
+            version: ServerApiVersion.v1,
+            strict: true,
+            deprecationErrors: true,
+        }
+    }
+);
+
+async function run() {
+  try {
+    // Connect the client to the server (optional starting in v4.7)
+    await client.connect();
+
+    // Send a ping to confirm a successful connection
+    await client.db("PisoIndexes").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    //app.listen(PORT, HOST);
+    app.listen(PORT, function () {
+      console.log("Server listening");
+    });
+    console.log(`Running on ${HOST}`);
+  } finally {
+    // Ensures that the client will close when you finish/error
+    console.log("Leaving client open");
+  }
+}
+run().catch(console.dir);
 
 app.get('/', (req,res) => {
     res.send("Hello, server is running ...")
@@ -26,10 +61,7 @@ app.get('/', (req,res) => {
 
 app.get('/getindexes', async(req, res) => {
     //connect to dabase extract all indexes
-    
-    const uri = "mongodb+srv://mypiso:i1tmMjT1HFDutT7o@pisoplannercluster0.bap6afz.mongodb.net/?retryWrites=true&w=majority";
-    const client = new MongoClient(uri);
-    const db = client.db('PisoIndexes');
+    const db = await client.db('PisoIndexes');
     const collection = await db.collection("pairs");
     const query = { name: "index" };
     const doc = await collection.findOne(query);
@@ -38,10 +70,8 @@ app.get('/getindexes', async(req, res) => {
 
 app.post('/setindexes', async (req, res) => {
     //update indexes in database
-    const uri = "mongodb+srv://mypiso:i1tmMjT1HFDutT7o@pisoplannercluster0.bap6afz.mongodb.net/?retryWrites=true&w=majority";
-    const client = new MongoClient(uri);
-    const db = client.db('PisoIndexes');
-    const collection = await db.collection("pairs");
+    let db = await client.db('PisoIndexes');
+    let collection = await db.collection("pairs");
     // create a filter for a movie to update
     const filter = { name: "index" };
     // this option instructs the method to create a document if no documents match the filter
@@ -55,13 +85,10 @@ app.post('/setindexes', async (req, res) => {
       },
     };
     const result = await collection.updateOne(filter, updateDoc, options);
+    res.send(result)
 
 })
-//app.listen(PORT, HOST);
-app.listen(PORT, function () {
-    console.log("server listening");
-});
-console.log(`Running on ${HOST}`);
+
 
 //exports.app = app;
 exports.app = app;
