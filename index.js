@@ -43,18 +43,19 @@ async function run() {
     // Send a ping to confirm a successful connection
     await client.db("PisoIndexes").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    //app.listen(PORT, HOST);
-    app.listen(PORT, function () {
-      console.log("Server listening");
-    });
-    console.log(`Running on ${HOST}`);
   } catch {
     console.log("Error connecting to MongoDB");
   }
 }
-run().catch(console.dir);
+
+//app.listen(PORT, HOST);
+app.listen(PORT, function () {
+  console.log("Server listening");
+});
+console.log(`Running on ${HOST}`);
 
 app.get('/', (req,res) => {
+    run().catch(console.dir);
     res.send("Hello, server is running ...")
 });
 
