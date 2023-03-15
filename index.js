@@ -48,9 +48,8 @@ async function run() {
       console.log("Server listening");
     });
     console.log(`Running on ${HOST}`);
-  } finally {
-    // Ensures that the client will close when you finish/error
-    console.log("Leaving client open");
+  } catch {
+    console.log("Error connecting to MongoDB");
   }
 }
 run().catch(console.dir);
