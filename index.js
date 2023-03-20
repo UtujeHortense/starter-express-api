@@ -112,33 +112,6 @@ app.post('/setnextmonday', async(req, res) => {
   // create a document that sets the plot of the movie
   const updateDoc = {
     $set: {
-      date: req.body.date,
-    },
-  };
-  const result = await collection.updateOne(filter, updateDoc, options);
-  res.send(result)
-})
-
-app.get('/getnextmonday', async(req, res) => {
-  //connect to dabase extract next week
-  const db = await client.db('PisoIndexes');
-  const collection = await db.collection("pairs");
-  const query = { name: "date" };
-  const doc = await collection.findOne(query);
-  res.send(doc)
-})
-
-app.post('/setnextmonday', async(req, res) => {
-  //update nexweek in database
-  let db = await client.db('PisoIndexes');
-  let collection = await db.collection("pairs");
-  // create a filter for a movie to update
-  const filter = { name: "date" };
-  // this option instructs the method to create a document if no documents match the filter
-  const options = { upsert: true };
-  // create a document that sets the plot of the movie
-  const updateDoc = {
-    $set: {
       nextweek: req.body.nextweek,
     },
   };
